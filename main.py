@@ -3,15 +3,16 @@ from cnn.cnn import NeuralNetwork
 from anotation_pic.pic1 import DrawPic
 from utils import Utils
 from sklearn.metrics import  recall_score, f1_score, precision_score
+from sklearn.metrics import classification_report
 
 def bpnn():
 
-    data = []
 
-    data_file_path = "/Users/yiyizhang/Desktop/PMEmo2019/extractfeature/text_feature.csv"
+    # data_file_path = "/Users/yiyizhang/Desktop/PMEmo2019/extractfeature/voice_feature.csv"
+    data_file_path = "fusiondata.csv"
         
-    input_nodes=300
-    hidden_nodes=100
+    input_nodes=500
+    hidden_nodes=200
     output_nodes=4
             
     #学习率
@@ -24,7 +25,7 @@ def bpnn():
     training_data_list=training_data_file.readlines()
     #关闭文件
     training_data_file.close()
-            
+    print(len(training_data_list))
     #5个世代，训练一次称为一个世代
     epochs=5
             
@@ -75,20 +76,13 @@ def bpnn():
             scorecard.append(0)
         y_p.append(label)
         y_t.append(correct_label)
-    print('Recall:', recall_score(y_t, y_p, average='macro'))
-    print('F1-score:', f1_score(y_t, y_p, average='macro'))
-    print('Precision score:', precision_score(y_t, y_p, average='macro'))
-    #计算准确率
-    scorecard_array=numpy.asarray(scorecard)
-    #转换为数组
-    print("performance = ",scorecard_array.sum() / scorecard_array.size)
+    print(y_t)
+    print(classification_report(y_t, y_p))
+    print("auc",Utils().multiclass_roc_auc_score(y_t,y_p))
 
-    data.append(recall_score(y_t, y_p, average='macro'))
-    data.append(f1_score(y_t, y_p, average='macro'))
-    data.append(precision_score(y_t, y_p, average='macro'))
-    data.append(scorecard_array.sum() / scorecard_array.size)
-    DrawPic.draw_histogram("BPNN",data,['Recall','F1-score','Precision score','performance'])
-
+    
+    
+    
 
 def draw():
     fields, data = Utils.get_csv_dic_list("/Users/yiyizhang/Desktop/PMEmo2019/new_anotations/static_annotations.csv")
@@ -102,4 +96,17 @@ def draw():
     # print(len(mean_y))
     DrawPic.draw(mean_x,mean_y)
 
-bpnn()
+
+# bpnn()
+# from ml.svm import *
+# from ml.forest import * 
+# from ml.gaussianNB import * 
+# from ml.logistic import * 
+# from dataload.loaddata import * 
+# from dataload.fusiondata import * 
+# from dataload.randompickd import * 
+# from MFCC.mfcc import *
+from lstm.test import * 
+# print(len(datas))
+# print(len(labels))
+# print(len(datas[0]))
