@@ -12,7 +12,7 @@
 import pandas as pd
 import csv
 import numpy as np
-from .tfidf import lyric_tf_idf
+from .tfidf import TEXT_FEATURE_NUM, lyric_tf_idf
 
 labels = []
 datas = []
@@ -41,7 +41,7 @@ for a in annotation_reader:
             lable = 3
         for item in X:
             item.astype(float)
-            item = np.pad(item,(0,100-len(item)),'constant')
+            item = np.pad(item,(0,TEXT_FEATURE_NUM-len(item)),'constant')
             datas.append(item)
             labels.append(lable)
 datas = np.array(datas)

@@ -98,7 +98,7 @@ def draw():
 
 
 # bpnn()
-# from ml.svm import *
+from ml.svm import *
 # from ml.forest import * 
 # from ml.gaussianNB import * 
 # from ml.logistic import * 
@@ -106,7 +106,7 @@ def draw():
 # from dataload.fusiondata import * 
 # from dataload.randompickd import * 
 # from MFCC.mfcc import *
-from lstm.test import * 
-# print(len(datas))
-# print(len(labels))
+# from lstm.test import * 
+print(len(datas))
+print(len(labels))
 # print(len(datas[0]))

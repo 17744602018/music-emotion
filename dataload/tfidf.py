@@ -6,7 +6,8 @@ import numpy as np
 
 file_path = "/Users/yiyizhang/Desktop/PMEmo2019/clyrics/"
 
-TEXT_FEATURE_NUM = 100
+TEXT_FEATURE_NUM = 200
+
 
 def cut_word(sent):
     return " ".join(list(jieba.cut(sent)))
@@ -21,20 +22,26 @@ def lyric_tf_idf(i):
         data_len = len(data)
         lis = []
         s1 = ""
-        for temp in data[0:data_len//3]:
+        part = 5
+        for temp in data[0:data_len//part]:
             s1 += cut_word(temp)
 
         s2 = ""
-        for temp in data[data_len//3:data_len*2//3]:
+        for temp in data[data_len//part:data_len*2//part]:
             s2 += cut_word(temp)
 
         s3 = ""
-        for temp in data[data_len*2//3:]:
+        for temp in data[data_len*2//part:data_len*3//part]:
             s3 += cut_word(temp)
+        
+        s4 = ""
+        for temp in data[data_len*3//part:]:
+            s4 += cut_word(temp)
 
         lis.append(s1)
         lis.append(s2)
         lis.append(s3)
+        lis.append(s4)
         transfer = TfidfVectorizer(max_features=TEXT_FEATURE_NUM)
         X = transfer.fit_transform(lis).toarray()
     return X 

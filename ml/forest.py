@@ -6,7 +6,7 @@
 @Author  :   yiyizhang 
 @Version :   1.0
 '''
-
+from sklearn.model_selection import GridSearchCV,train_test_split
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
@@ -22,28 +22,41 @@ def evaluate(y_true, y_pred):
     accuracy = accuracy_score(y_true, y_pred)
     return accuracy
 
-# 定义K折交叉验证
-kf = KFold(n_splits=2, shuffle=True)
 
-# 定义随机森林分类器
-clf = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=42)
 
 # 定义保存评估结果的列表
 rf_accuracy = []
+X_train, X_test, y_train, y_test = train_test_split(datas, labels, test_size=0.2, random_state=42)
 
-# K折交叉验证
-for train_index, test_index in kf.split(datas):
-    # 分割训练集和测试集
-    X_train, X_test = datas[train_index], datas[test_index]
-    y_train, y_test = labels[train_index], labels[test_index]
-    # 训练模型并预测
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(X_test)
-    # 评估模型并保存结果
-    acc = evaluate(y_test, y_pred)
-    rf_accuracy.append(acc)
-    print(classification_report(y_test,y_pred))
-    print("auc",Utils().multiclass_roc_auc_score(y_test,y_pred))
+param_grid = {
+    'n_estimators': [150],
+    'max_depth': [15],
+    'min_samples_split': [4],
+    'max_features':[len(datas[0])]
+}
+# 定义随机森林分类器
+# forest_model = RandomForestClassifier(random_state=42)
 
-# 打印平均准确率
-print('随机森林平均准确率：', np.mean(rf_accuracy))
+
+# 定义网格搜索对象
+# grid_search = GridSearchCV(forest_model, param_grid, cv=5)
+
+# # 进行交叉验证和参数调整
+# grid_search.fit(X_train, y_train)
+
+# # 输出最佳参数组合
+# print("Best parameters: {}".format(grid_search.best_params_))
+
+# 使用最佳参数组合训练模型 融合的max_depth = 15
+best_forest_model = RandomForestClassifier(max_depth=15,max_features=100,min_samples_split=4,n_estimators=150,random_state=42)
+best_forest_model.fit(X_train, y_train)
+
+y_pred = best_forest_model.predict(X_test)
+# 评估模型并保存结果
+acc = evaluate(y_test, y_pred)
+print(y_test[:20])
+print(y_pred[:20])
+rf_accuracy.append(acc)
+print(classification_report(y_test,y_pred))
+print("auc",Utils().multiclass_roc_auc_score(y_test,y_pred))
+

@@ -17,7 +17,7 @@ from utils import Utils
 labels = []
 datas = []
 
-
+print("random pick")
 
 annotation = "/Users/yiyizhang/Desktop/PMEmo2019/newannotations/thayer_static_annotations.csv"
 arf = open(annotation,mode="r",encoding="utf-8")

@@ -73,3 +73,13 @@ class Utils:
         y_true = lb.transform(y_true)
         y_pred = lb.transform(y_pred)
         return roc_auc_score(y_true, y_pred, average=average)
+    
+    def save_data_label(self,data,label,filename):
+        with open(filename+"data.csv",mode="w",encoding="utf-8") as wf:
+            csv_writer = csv.writer(wf)
+            for item in data:
+                csv_writer.writerow(item)
+        
+        with open(filename+"label.csv",mode="w",encoding="utf-8") as wf:
+            csv_writer = csv.writer(wf)
+            csv_writer.writerow(label)
