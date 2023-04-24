@@ -72,7 +72,6 @@ def normalize_mfcc(mfcc_features):
 # 加载数据并提取MFCC特征
 X = []
 y = []
-
 mp3_path = '/Users/yiyizhang/Desktop/PMEmo2019/chorus/{}.mp3'
 for i in range(1000):
     if os.path.exists(mp3_path.format(i)):
@@ -94,9 +93,8 @@ for i in range(1000):
 
 # 将MFCC特征转换为Numpy数组
 X = np.array(X)
-print(len(X))
-print(X[0])
 y = np.array(y)
+print(X.shape)
 
 # 对标签进行one-hot编码
 y = one_hot_encode(y)
@@ -113,7 +111,7 @@ model.summary()
 
 # 训练模型
 metrics_history = MetricsHistory()
-model.fit(X_train, y_train, epochs=20, batch_size=32, validation_data=(X_test, y_test),callbacks=[metrics_history])
+model.fit(X_train, y_train, epochs=5, batch_size=32, validation_data=(X_test, y_test),callbacks=[metrics_history])
 
 # 在测试集上进行评估
 loss, accuracy = model.evaluate(X_test, y_test)
@@ -134,6 +132,6 @@ for y in y_test:
 print(classification_report(y_t,y_pred_classes))
 print("auc",Utils().multiclass_roc_auc_score(y_t,y_pred_classes))
 
-# metrics_history.draw()
+metrics_history.draw()
 
 #val_loss表示模型在验证集上的损失函数值，val_accuracy表示模型在验证集上的准确率。loss表示模型在训练集上的损失函数值，accuracy表示模型在训练集上的准确率。

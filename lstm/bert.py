@@ -95,7 +95,7 @@ model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=["accur
 
 # 训练模型
 metrics_history = MetricsHistory()
-model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=20, batch_size=32,callbacks=[metrics_history])
+model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=4, batch_size=32,callbacks=[metrics_history])
 
 # 测试模型
 loss, accuracy = model.evaluate(X_test, y_test)

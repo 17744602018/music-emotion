@@ -4,6 +4,7 @@ from anotation_pic.pic1 import DrawPic
 from utils import Utils
 from sklearn.metrics import  recall_score, f1_score, precision_score
 from sklearn.metrics import classification_report
+from lstm.audiolyriclstm import AudioLyricLSTM
 
 def bpnn():
 
@@ -98,7 +99,7 @@ def draw():
 
 
 # bpnn()
-from ml.svm import *
+# from ml.svm import *
 # from ml.forest import * 
 # from ml.gaussianNB import * 
 # from ml.logistic import * 
@@ -107,6 +108,84 @@ from ml.svm import *
 # from dataload.randompickd import * 
 # from MFCC.mfcc import *
 # from lstm.test import * 
-print(len(datas))
-print(len(labels))
+# print(len(datas))
+# print(len(labels))
 # print(len(datas[0]))
+
+audio_lyric_lstm = AudioLyricLSTM(150,300,True)
+def xx():
+    import numpy as np
+    import pandas as pd
+    from keras.models import Model
+    from keras.layers import Input, LSTM, Dense, concatenate
+    from keras.callbacks import EarlyStopping
+
+    # 加载数据，这里以随机生成的数据作为例子
+    X_lyric_train = np.random.rand(100, 10, 20)  # 假设歌词数据的维度是(100, 10, 20)
+    X_audio_train = np.random.rand(100, 50, 30)  # 假设音频数据的维度是(100, 50, 30)
+    y_train = np.random.randint(0, 4, size=100)  # 假设标签有4类，标签的维度是(100,)
+    print(X_lyric_train.shape)
+    print(X_audio_train.shape)
+    print(y_train.shape)
+    # 定义模型的输入层
+    lyric_input = Input(shape=(X_lyric_train.shape[1], X_lyric_train.shape[2]))
+    audio_input = Input(shape=(X_audio_train.shape[1], X_audio_train.shape[2]))
+
+    # 定义LSTM层
+    lstm_lyric = LSTM(64)(lyric_input)
+    lstm_audio = LSTM(64)(audio_input)
+
+    # 合并LSTM层的输出
+    merged = concatenate([lstm_lyric, lstm_audio])
+
+    # 定义输出层
+    output = Dense(4, activation='softmax')(merged)
+
+    # 定义模型
+    merged_model = Model(inputs=[lyric_input, audio_input], outputs=output)
+
+    # 编译模型
+    merged_model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+    # 定义EarlyStopping
+    early_stopping = EarlyStopping(monitor='val_loss', patience=5)
+
+    # 训练模型
+    history = merged_model.fit(x=[X_lyric_train, X_audio_train], y=y_train, validation_split=0.2, epochs=100, callbacks=[early_stopping])
+
+    # 在测试集上测试模型
+    X_lyric_test = np.random.rand(20, 10, 20)
+    X_audio_test = np.random.rand(20, 50, 30)
+    y_test = np.random.randint(0, 4, size=20)
+    test_loss, test_acc = merged_model.evaluate(x=[X_lyric_test, X_audio_test], y=y_test)
+
+    print('Test accuracy:', test_acc)
+
+
+def xxx():
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from wordcloud import WordCloud
+
+    # 加载数据
+    data = pd.read_csv("/Users/yiyizhang/Desktop/music-emotion/data/text_feature_lyric.csv")
+
+    # 使用 TF-IDF 提取特征
+    tfidf = TfidfVectorizer(stop_words='english')
+    features = tfidf.fit_transform(data["text"])
+
+    # 获取每个单词的权重
+    weights = np.asarray(features.mean(axis=0)).ravel().tolist()
+    weights_df = pd.DataFrame({'term': tfidf.get_feature_names_out(), 'weight': weights})
+
+    # 生成词云
+    wordcloud = WordCloud(width=800, height=400, background_color="white").generate_from_frequencies(weights_df.set_index('term')['weight'].to_dict())
+
+    # 展示词云
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.show()
+# xxx()
